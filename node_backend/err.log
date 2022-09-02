@@ -1,0 +1,35 @@
+QMetaObject::connectSlotsByName: No matching signal for on_tbar_position_valueChanged(int)
+QMetaObject::connectSlotsByName: No matching signal for on_actionShowTransitionProperties_triggered()
+QMetaObject::connectSlotsByName: No matching signal for on_actionHideTransitionProperties_triggered()
+error: os_dlopen(libpython3.9.dylib->libpython3.9.dylib): dlopen(libpython3.9.dylib, 0x0101): tried: '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), 'libpython3.9.dylib' (no such file), '/usr/lib/libpython3.9.dylib' (no such file), '/Users/nav/Node Projects/streaming_dashboard/node_backend/libpython3.9.dylib' (no such file)
+
+error: os_dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib->/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib): dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib, 0x0101): tried: '/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib' (no such file)
+
+QMetaObject::connectSlotsByName: No matching signal for on_tbar_position_valueChanged(int)
+QMetaObject::connectSlotsByName: No matching signal for on_actionShowTransitionProperties_triggered()
+QMetaObject::connectSlotsByName: No matching signal for on_actionHideTransitionProperties_triggered()
+error: os_dlopen(libpython3.9.dylib->libpython3.9.dylib): dlopen(libpython3.9.dylib, 0x0101): tried: '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), 'libpython3.9.dylib' (no such file), '/usr/lib/libpython3.9.dylib' (no such file), '/Users/nav/Node Projects/streaming_dashboard/node_backend/libpython3.9.dylib' (no such file)
+
+error: os_dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib->/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib): dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib, 0x0101): tried: '/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib' (no such file)
+
+QMetaObject::connectSlotsByName: No matching signal for on_tbar_position_valueChanged(int)
+QMetaObject::connectSlotsByName: No matching signal for on_actionShowTransitionProperties_triggered()
+QMetaObject::connectSlotsByName: No matching signal for on_actionHideTransitionProperties_triggered()
+error: os_dlopen(libpython3.9.dylib->libpython3.9.dylib): dlopen(libpython3.9.dylib, 0x0101): tried: '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), 'libpython3.9.dylib' (no such file), '/usr/lib/libpython3.9.dylib' (no such file), '/Users/nav/Node Projects/streaming_dashboard/node_backend/libpython3.9.dylib' (no such file)
+
+error: os_dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib->/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib): dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib, 0x0101): tried: '/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib' (no such file)
+
+QMetaObject::connectSlotsByName: No matching signal for on_tbar_position_valueChanged(int)
+QMetaObject::connectSlotsByName: No matching signal for on_actionShowTransitionProperties_triggered()
+QMetaObject::connectSlotsByName: No matching signal for on_actionHideTransitionProperties_triggered()
+error: os_dlopen(libpython3.9.dylib->libpython3.9.dylib): dlopen(libpython3.9.dylib, 0x0101): tried: '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), 'libpython3.9.dylib' (no such file), '/usr/lib/libpython3.9.dylib' (no such file), '/Users/nav/Node Projects/streaming_dashboard/node_backend/libpython3.9.dylib' (no such file)
+
+error: os_dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib->/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib): dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib, 0x0101): tried: '/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib' (no such file)
+
+QMetaObject::connectSlotsByName: No matching signal for on_tbar_position_valueChanged(int)
+QMetaObject::connectSlotsByName: No matching signal for on_actionShowTransitionProperties_triggered()
+QMetaObject::connectSlotsByName: No matching signal for on_actionHideTransitionProperties_triggered()
+error: os_dlopen(libpython3.9.dylib->libpython3.9.dylib): dlopen(libpython3.9.dylib, 0x0101): tried: '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), '/Applications/OBS.app/Contents/MacOS/../Frameworks/libpython3.9.dylib' (no such file), 'libpython3.9.dylib' (no such file), '/usr/lib/libpython3.9.dylib' (no such file), '/Users/nav/Node Projects/streaming_dashboard/node_backend/libpython3.9.dylib' (no such file)
+
+error: os_dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib->/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib): dlopen(/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib, 0x0101): tried: '/Applications/VLC.app/Contents/MacOS/lib/libvlccore.dylib' (no such file)
+
