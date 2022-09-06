@@ -13,9 +13,9 @@ export const handleLogin = function({
         console.log('res_json',res_json);
         if(res_json.success==true){
             setAuthState({
-                username:res_json.userLogin,
-                jwt:res_json.jwt,
-                exp:res_json.jwtExp*1000
+                'username':res_json.userLogin,
+                'jwt':res_json.jwt,
+                'exp':res_json.jwtExp*1000
             });
         }
         else{

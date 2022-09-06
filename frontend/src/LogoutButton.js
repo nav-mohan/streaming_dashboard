@@ -4,8 +4,9 @@ export default function LogoutButton({setAuthState}){
     return(
         <button onClick={(e)=>{
             setAuthState({
-                username:'',
-                jwt:'',
+                'username':'',
+                'jwt':'',
+                'exp':0
                 })
         }}>Logout</button>
     )

@@ -1,17 +1,13 @@
-import { useState } from "react";
-import { AuthContext } from "./AuthContext";
-import { usernameLocalStorageKey } from "./config";
+import { AuthContextProvider } from "./AuthContext";
 import AuthForm from "./AuthForm";
-import useLocalStorage from "./useLocalStorage";
 import Dashboard from "./Dashboard";
 function App() {
-  const [authState,setAuthState] = useLocalStorage(usernameLocalStorageKey,{username:'',jwt:'',exp:0});
   return (
     <div className="App">
-      <AuthContext.Provider value = {{authState,setAuthState}}>
+      <AuthContextProvider>
       <AuthForm/>
       <Dashboard/>
-      </AuthContext.Provider>
+      </AuthContextProvider>
     </div>
   );
 }
