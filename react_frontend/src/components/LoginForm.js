@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { preparePostBody } from "../helpers/preparePostBody";
 import fetchLogin from "../helpers/fetchLogin";
+import {nodeBaseUrl,loginPath} from "../config"
+
 
 const handleLogin = function({
     inputUsernameEmail,
@@ -11,7 +13,7 @@ const handleLogin = function({
     setWarning
 }){
     var postBody = preparePostBody({inputUsernameEmail,inputPassword})
-    fetchLogin({postBody})
+    fetchLogin({nodeBaseUrl,loginPath,postBody})
     .then(res_json=>{
         console.log('reS_json',res_json)
         if(res_json.success==true){

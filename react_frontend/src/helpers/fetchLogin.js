@@ -1,6 +1,4 @@
-import {nodeBaseUrl,loginPath} from "../config";
-
-export default function fetchLogin({postBody}){
+export default function fetchLogin({nodeBaseUrl,loginPath,postBody}){
     return fetch(nodeBaseUrl+loginPath, {
         method:"POST",
         headers:{"Content-Type":"application/json"},

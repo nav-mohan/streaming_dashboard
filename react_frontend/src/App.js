@@ -22,7 +22,7 @@ function App() {
       console.log('BEGIN AUTOLOGIN NOW WITH ',username,authToken)
     }
   },[username,authToken])
-
+let msg;
   return (
     <div className="App">
 
@@ -34,7 +34,6 @@ function App() {
         isAuthenticated={isAuthenticated}
         setIsAuthenticated={setIsAuthenticated}
       />
-      
     </div>
   );
 }

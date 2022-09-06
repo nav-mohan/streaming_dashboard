@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 import { serverUrl } from "../config";
 
 export default function SocketConnection({authToken}) {
+
+    const [isObsAuthy,setIsObsAuthy] = useState(false);
 
     const socket = socketIOClient(serverUrl,{
         extraHeaders:{Authorization: authToken}

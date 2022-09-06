@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const http = require('http');
 const { loginRouter } 	= require("./loginRouter");
 const socketIO = require('socket.io');
-const {clientOrigins, serverPort} = require('./config');
+const {clientOrigins,serverPort} = require('./config');
 
 
 const { validateToken } = require('./validateSocketToken');
@@ -17,7 +17,7 @@ app = express();
 app.use(helmet())
 app.use(cors({ origin: clientOrigins }))
 
-app.use(express.static('../react_frontend/build'))
+// app.use(express.static('../react_frontend/build'))
 
 let http_server = http.createServer(app);
 app.use('/login',loginRouter)
@@ -34,6 +34,7 @@ io.on("connection", (socket) => {
     socket.emit("HELLO WORLD!");
     console.log("WEBSOCKET CONNECTED")
     const authToken = socket.handshake['headers']['authorization'];
+    socket.emit('warning','WARNING!!!');
     if(!validateToken(authToken)){
         console.log('NOT GOOD - DISONNETING');
         socket.disconnect();
