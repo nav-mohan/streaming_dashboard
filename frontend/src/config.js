@@ -6,8 +6,7 @@ const refreshPath        = process.env.REACT_APP_REFRESH_PATH;
 const revokePath         = process.env.REACT_APP_REVOKE_PATH;
 const deployEnvironment  = process.env.REACT_APP_DEPLOYMENT_ENVIRONMENT;
 
-const usernameLocalStorageKey          = process.env.REACT_APP_USERNAME_LOCALSTORAGE_KEY;
-const authTokenLocalStorageKey          = process.env.REACT_APP_AUTHTOKEN_LOCALSTORAGE_KEY;
+const authStateLocalStorageKey          = process.env.REACT_APP_AUTHSTATE_LOCALSTORAGE_KEY;
 
 var nodeBaseUrl;
 
@@ -17,11 +16,8 @@ if(!baseUrlDevelopment){
 if(!baseUrlProduction){
     throw new Error(".env is missing REACT_APP_BASEURL_PRODUCTION")
 }
-if(!usernameLocalStorageKey){
-    throw new Error(".env is missing REACT_APP_USERNAME_LOCALSTORAGE_KEY");
-}
-if(!authTokenLocalStorageKey){
-    throw new Error(".env is missing REACT_APP_AUTHTOKEN_LOCALSTORAGE_KEY");
+if(!authStateLocalStorageKey){
+    throw new Error(".env is missing REACT_APP_AUTHSTATE_LOCALSTORAGE_KEY");
 }
 if(!loginPath){
     throw new Error(".env is missing REACT_APP_LOGIN_PATH")
@@ -49,8 +45,7 @@ if(deployEnvironment=='PRODUCTION'){
 
 module.exports = {
     nodeBaseUrl,
-    usernameLocalStorageKey,
-    authTokenLocalStorageKey,
+    authStateLocalStorageKey,
     loginPath,
     validatePath,
     refreshPath,

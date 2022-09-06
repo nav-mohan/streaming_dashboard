@@ -6,7 +6,6 @@ export default function fetchLogin({nodeBaseUrl,loginPath,postBody}){
     })
     .then(function(res){
         if(res.status==200){
-            console.log('res',res)
             return res.json();
         }
         throw new Error('Login attempt res.status='+res.status);
