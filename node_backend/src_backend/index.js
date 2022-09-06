@@ -31,7 +31,7 @@ let io = socketIO(http_server,{
 })
 
 io.on("connection", (socket) => {
-    socket.emit("HELLO WORLD!");
+    socket.emit('info','Verifying your login credentials');
     console.log("WEBSOCKET CONNECTED")
     const authToken = socket.handshake['headers']['authorization'];
     socket.emit('warning','WARNING!!!');
@@ -42,21 +42,44 @@ io.on("connection", (socket) => {
 
     socket.on('start-obs',()=>{
         console.log('starting OBS');
-        startOBS(socket)
+        const authToken = socket.handshake['headers']['authorization'];
+        if(!validateToken(authToken)){
+            console.log('AUTH TOKEN FAILED VALIDATION - DISONNETING');
+            socket.emit('warning','You are not authorized to call this. Please login again')
+            socket.disconnect();
+        }
+        else{
+            startOBS(socket)
+        }
     })
 
     socket.on('stop-obs',()=>{
         console.log('stoping OBS');
-        stopOBS(socket)
+        if(!validateToken(authToken)){
+            console.log('AUTH TOKEN FAILED VALIDATION - DISONNETING');
+            socket.emit('warning','You are not authorized to call this. Please login again')
+            socket.disconnect();
+        }
+        else{
+            stopOBS(socket);
+        }
     })
 
-    
     socket.on('connect-obs',()=>{
         const obsManager = new OBSManager(socket);
         obsManager.initializeConnection('localhost','4455','1234')
     })
     
-    socket.on('start-stream',()=>{console.log('starting stream');})
+    socket.on('start-stream',()=>{
+        if(!validateToken(authToken)){
+            console.log('AUTH TOKEN FAILED VALIDATION - DISONNETING');
+            socket.emit('warning','You are not authorized to call this. Please login again')
+            socket.disconnect();
+        }
+        else{
+            console.log('starting stream');
+        }
+    })
 
     socket.on('disconnect',(e)=>{
         console.log('WEBSOCKET DISCONNECTED',e);

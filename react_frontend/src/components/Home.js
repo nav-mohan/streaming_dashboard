@@ -1,6 +1,8 @@
 import React from "react";
-import Dashboard from "./Dashboard";
+// import Dashboard from "./Dashboard";
+import DashWithContext from "./DashWithContext";
 import LoginForm from "./LoginForm";
+import { AuthContext } from "./AuthContextCreator";
 
 export default function Home({
     authToken,
@@ -21,10 +23,11 @@ export default function Home({
     }
     else{
         return(
-            <Dashboard 
-                authToken={authToken}
-                username={username}
-            />
+            // <Dashboard authToken={authToken} username={username} />
+            // <DashWithContext authToken={authToken} username={username} />
+            <AuthContext.Provider value = {{authToken,setAuthToken}}>
+                
+            </AuthContext.Provider>
         )
     }
 }

@@ -5,7 +5,6 @@ const validatePath       = process.env.REACT_APP_VALIDATE_PATH;
 const refreshPath        = process.env.REACT_APP_REFRESH_PATH;
 const revokePath         = process.env.REACT_APP_REVOKE_PATH;
 const deployEnvironment  = process.env.REACT_APP_DEPLOYMENT_ENVIRONMENT;
-const serverUrl          = process.env.REACT_APP_SERVER_URL;
 
 const usernameLocalStorageKey          = process.env.REACT_APP_USERNAME_LOCALSTORAGE_KEY;
 const authTokenLocalStorageKey          = process.env.REACT_APP_AUTHTOKEN_LOCALSTORAGE_KEY;
@@ -49,7 +48,6 @@ if(deployEnvironment=='PRODUCTION'){
 }
 
 module.exports = {
-    serverUrl,
     nodeBaseUrl,
     usernameLocalStorageKey,
     authTokenLocalStorageKey,
