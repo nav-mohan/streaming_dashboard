@@ -11,6 +11,19 @@ const {wordpressBaseUrl,
 const express           = require('express');
 const https             = require('https');
 
+// prepare the fetch options 
+const loginOptions = {
+    hostname: wordpressBaseUrl,
+    port: 443,
+    path: wordpressJwtLoginPath,
+    method: 'POST',
+    headers:{"Content-Type":"application/json"},
+    //Must update fm949's SSL certificate to WebNames
+    rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
+};
+// prepare the postData with the Wordpress JWT Auth Key (Not the secretServerKey)
+const postData = {'AUTH_KEY':wordpressJwtAuthKey};
+
 const loginRouter       = express.Router();
 
 loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
@@ -22,10 +35,7 @@ loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
         console.log("HELLO");
         nodeLoginBodyBuffer.push(d)
     })
-    
-    // Initialize the postData with the Wordpress JWT Auth Key (Not the secretServerKey)
-    var postData = {'AUTH_KEY':wordpressJwtAuthKey};
-    
+
     nodeLoginRequest.on("end", () => {
         console.log("Login Form Received from React");
 
@@ -43,16 +53,7 @@ loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
             console.log('Unable to decode Login Form');
             console.log(error);
         }
-        var loginOptions = {
-            hostname: wordpressBaseUrl,
-            port: 443,
-            path: wordpressJwtLoginPath,
-            method: 'POST',
-            headers:{"Content-Type":"application/json"},
-            //Must update fm949's SSL certificate to WebNames
-            rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
-        };
-    
+
         // forward the Login Form to Wordpress
         var wpLoginRequest = https.request(loginOptions, (wpLoginResponse) => {
             
@@ -170,7 +171,11 @@ loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
                 "wpErrorMessage":error
             })
         });
+
+        // Send the AUTH_KEY for the plugin
         wpLoginRequest.write(JSON.stringify(postData));
+
+        // End of transaction
         wpLoginRequest.end();
     })
 })

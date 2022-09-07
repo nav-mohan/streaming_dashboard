@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React from "react";
 
 export default function LogoutButton({setAuthState}){
     return(
