@@ -9,12 +9,12 @@ export const handleLogout = function({
     var postBody = prepareLogoutPost({jwt})
     fetchLogout({nodeBaseUrl,logoutPath,postBody})
     .then(res_json=>{
-        console.log('res_json',res_json);
         if(res_json.success==true){
-            setAuthState({'username':'','jwt':'','exp':0});
+            setAuthState({'username':'','jwt':'','exp':0});//this unmounts SocketContext.Provider
+            alert('You have logged out!')
         }
         else{
-            alert(JSON.stringify(res_json.wpPayloadMessage));
+            alert(JSON.stringify(res_json.error));
         }
     })
     .catch((error)=>{

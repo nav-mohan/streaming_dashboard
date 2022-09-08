@@ -12,7 +12,7 @@ const express           = require('express');
 const https             = require('https');
 
 // prepare the fetch options 
-const loginOptions = {
+const wpFetchOptions = {
     hostname: wordpressBaseUrl,
     port: 443,
     path: wordpressJwtLoginPath,
@@ -55,7 +55,7 @@ loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
         }
 
         // forward the Login Form to Wordpress
-        var wpLoginRequest = https.request(loginOptions, (wpLoginResponse) => {
+        var wpLoginRequest = https.request(wpFetchOptions, (wpLoginResponse) => {
             
             var jwtPayloadBuffer = [];
             wpLoginResponse.on('data', (d) => {
@@ -79,7 +79,7 @@ loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
                         'success':false,
                         "wpStatusCode":wpLoginResponse.statusCode,
                         "wpStatusMessage":wpLoginResponse.statusMessage,
-                        "erroDetails":error
+                        "error":error
                     })
                     return;
                 }

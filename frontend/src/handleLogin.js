@@ -19,7 +19,7 @@ export const handleLogin = function({
             });
         }
         else{
-            alert(JSON.stringify(res_json.wpPayloadMessage));
+            alert(JSON.stringify(res_json.error));
         }
     })
     .catch((error)=>{

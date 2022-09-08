@@ -3,9 +3,9 @@ const helmet = require('helmet');
 const express = require('express');
 
 const {clientOrigins} = require('./config');
-const { loginRouter } 	= require("./loginRouter");
+const { loginRouter } 	= require("./jloginRouter");
+// const { loginRouter } 	= require("./loginRouter");
 
-const{io} = require('./socket');
 const { logoutRouter } = require('./logoutRouter');
 
 app = express();

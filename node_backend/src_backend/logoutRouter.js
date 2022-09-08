@@ -12,7 +12,7 @@ const express           = require('express');
 const https             = require('https');
 const { io } = require('./socket');
 
-const wpFetchOptions = {
+const wpOptions = {
     hostname: wordpressBaseUrl,
     port: 443,
     path: wordpressJwtRevokePath,
@@ -25,59 +25,101 @@ const postData = {'AUTH_KEY':wordpressJwtAuthKey};
 
 const logoutRouter = express.Router();
 
-const forwardToWordpress = function(wpLogoutResponse){
-    var jwtPayloadBuffer = [];
-    wpLogoutResponse.on('data', (d) => {
-        // process.stdout.write(d);
-        jwtPayloadBuffer.push(d.toString())
-    });
-    wpLogoutResponse.on("end",async () => {
-        console.log("Received Wordpress response to logout attempt")
-        console.log(jwtPayloadBuffer)})
-        io.close()
-}
-
-const onNodeEnd = function(nodeLogoutBodyBuffer){
-    console.log('Node Logout Request Received');
-    // Do Some Sanitization of the Logout Form here -- but for what?
-    
-    // prepare the JWT-Revoke Form for Wordpress
-    try {
-        var nodeLogoutBody = decodeURIComponent(nodeLogoutBodyBuffer).split("&");
-        console.log(nodeLogoutBodyBuffer.toString());
-        nodeLogoutBody.forEach(logoutDetail => {
-            postData[logoutDetail.split("=")[0]] = logoutDetail.split("=")[1];
+const decodeForm = function(dataBuffer){
+    // Do some sanitization here
+    try{
+        const data = decodeURIComponent(dataBuffer).split('&');
+        data.forEach(el => {
+            postData[el.split("=")[0]] = el.split("=")[1]
         });
-    } 
-    catch (error) {
-        console.log('Unable to decode Logout Form');
+    }
+    catch(error){
         console.log(error);
     }
-
-    var wpLogoutRequest = https.request(wpFetchOptions, forwardToWordpress)
-    
-    // Send the AUTH_KEY for the plugin
-    // wpLogoutRequest.write(JSON.stringify(postData));
-
-    // End of transaction
-    wpLogoutRequest.end();
 }
 
 
-logoutRouter.post('/', (nodeLogoutRequest,nodeLogoutResponse)=>{
-    console.log("LOGGING OUT");
-    console.log(Object.keys(nodeLogoutRequest.socket))
-    // receive the Logout Form from React
-    var nodeLogoutBodyBuffer = [];
-    nodeLogoutRequest.on("data", (d) => {
-        console.log("HELLO");
-        nodeLogoutBodyBuffer.push(d)
+const wpResOnEnd = function(
+    dataBuffer,
+    wpStatusCode,
+    wpStatusMessage,
+    nodeRes
+    ){
+        let wpLogoutResult;
+        try {
+            wpLogoutResult = JSON.parse(dataBuffer)
+        } catch (error) {
+            console.log('Unable to parse dataBuffer',error);
+            nodeRes.send({
+                'success':false,
+                "wpStatusCode":wpStatusCode,
+                "wpStatusMessage":wpStatusMessage,
+                "error":error
+            })
+            return;
+        }
+        if(wpStatusCode!==200){
+            nodeRes.send({
+                'success':false,
+                "wpStatusCode":wpStatusCode,
+                "wpStatusMessage":wpStatusMessage,
+                "error":wpLogoutResult.data.message
+            })
+            return;
+        }
+        if(wpLogoutResult.success==true){
+            io.fetchSockets().then(sockets=>{
+                sockets.forEach(s => {
+                    if(
+                        s.handshake.headers && 
+                        s.handshake.headers.authorization && 
+                        s.handshake.headers.authorization == wpLogoutResult.data.jwt
+                    ){
+                        s.disconnect();
+                    }
+                });
+            });
+
+            // io.close();
+
+            nodeRes.send({
+                'success':true,
+                "wpStatusCode":wpStatusCode,
+                "wpStatusMessage":wpStatusMessage,
+                "error":null
+            })
+            return;
+        }
+}
+
+logoutRouter.post('/',(nodeReq,nodeRes)=>{
+
+    var logoutPostBuffer = '';
+    nodeReq.on('data',(d)=>{logoutPostBuffer+=(d.toString());});
+
+    nodeReq.on('end',()=>{
+        decodeForm(logoutPostBuffer);
+        var wpReq = https.request(wpOptions,(wpRes)=>{
+            var logoutBuffer = '';
+            wpRes.on('data',(d)=>{logoutBuffer+=(d.toString())});
+            wpRes.on('end',()=>{wpResOnEnd(logoutBuffer,wpRes.statusCode,wpRes.statusMessage,nodeRes)});
+        })
+        wpReq.write(JSON.stringify(postData));
+        
+        wpReq.on('error',(error)=>{
+            nodeRes.send({
+                "success":false,
+                "wpStatusCode":500,
+                "wpStatusMessage":"Wordpress site is probably down",
+                "error":error
+            })
+        })
+        wpReq.end();
+    });
+
+    nodeReq.on('error',(error)=>{
+        console.log('nodeReq Error:', error);
     })
-
-    // Initialize the postData with the Wordpress JWT Auth Key (Not the secretServerKey)
-    var postData = {'AUTH_KEY':wordpressJwtAuthKey};
-
-    nodeLogoutRequest.on('end',()=>{onNodeEnd(nodeLogoutBodyBuffer)})
 })
 
 
