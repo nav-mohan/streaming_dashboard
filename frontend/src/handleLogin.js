@@ -1,4 +1,4 @@
-import { preparePostBody } from "./preparePostBody";
+import { prepareLoginPost } from "./prepareLoginPost";
 import fetchLogin from "./fetchLogin";
 import { nodeBaseUrl,loginPath } from "./config"
 
@@ -7,7 +7,7 @@ export const handleLogin = function({
     inputPassword,
     setAuthState
 }){
-    var postBody = preparePostBody({inputUsernameEmail,inputPassword})
+    var postBody = prepareLoginPost({inputUsernameEmail,inputPassword})
     fetchLogin({nodeBaseUrl,loginPath,postBody})
     .then(res_json=>{
         console.log('res_json',res_json);

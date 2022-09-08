@@ -15,19 +15,32 @@ export const SocketContextProvider = function(props){
         extraHeaders:{Authorization: authState.jwt}
     })
 
+    const handleConnect = function(e){
+        alert('Established connection with middleman server!',e)
+    };
+    const handleDisconnect = function(e){
+        setAuthState({'username':'','jwt':'','exp':0});
+        alert('Lost connection to middleman server',e);
+    }
+    const handleInfo = function(e){
+        console.log('INFO',e)
+    }
+    const handleWarning = function(e){
+        console.log('WARNING',e)
+    }
+
     useEffect(()=>{
-        socket.on('connect',(e)=>alert('Established connection with middleman server!'))
-        socket.on('disconnect',(e)=>{
-            setAuthState({
-                'username':'',
-                'jwt':'',
-                'exp':0
-                })
-            alert('Lost connection to middleman server')
-        })
+        socket.on('connect',handleConnect)
+        socket.on('disconnect',handleDisconnect)
+        socket.on('info',handleInfo)
+        socket.on('warning',handleWarning)
+
         return(()=>{
             socket.off('connect');
             socket.off('disconnect');
+            socket.off('info');
+            socket.off('obs-log');
+            socket.off('warning');
             socket.disconnect();
             socket.close();
         })

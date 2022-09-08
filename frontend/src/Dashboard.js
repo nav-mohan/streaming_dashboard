@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import LogDisplay from "./LogDisplay";
 import { SocketContextProvider } from "./SocketContext";
 import StartOBSButton from "./StartOBSButton";
 
@@ -13,6 +14,7 @@ export default function Dashboard(){
             <SocketContextProvider>
                 <div>Go ahead man!</div>
                 <StartOBSButton/>
+                <LogDisplay/>
             </SocketContextProvider>
         )
     }

@@ -14,7 +14,7 @@ export default function AuthForm(){
     }
     else{
         return(
-            <LogoutButton setAuthState={setAuthState}/>
+            <LogoutButton authState = {authState} setAuthState={setAuthState}/>
         )
     }
 }

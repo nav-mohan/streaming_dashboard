@@ -1,4 +1,4 @@
-function preparePostBody({
+function prepareLoginPost({
     inputUsernameEmail, inputPassword
 }){
     if(inputUsernameEmail.includes("@"))
@@ -7,4 +7,4 @@ function preparePostBody({
         return( encodeURIComponent(`username=${inputUsernameEmail}`) + "&" + encodeURIComponent(`password=${inputPassword}`) );
 }
 
-module.exports={preparePostBody}
+module.exports={prepareLoginPost}

@@ -20,7 +20,7 @@ const stopOBS = function(socket){
 				console.log(stdout)
 				message['stdout'] = stdout
 			}
-			socket.emit('stop-log',message)
+			socket.emit('obs-log',{'data':JSON.stringify(message)})
 		});
 	} catch (error) {
 		

@@ -1,13 +1,11 @@
 import React from "react";
+import {handleLogout} from "./handleLogout"
 
-export default function LogoutButton({setAuthState}){
+export default function LogoutButton({authState,setAuthState}){
+    const jwt = authState.jwt;
     return(
         <button onClick={(e)=>{
-            setAuthState({
-                'username':'',
-                'jwt':'',
-                'exp':0
-                })
+            handleLogout({jwt,setAuthState})
         }}>Logout</button>
     )
 }

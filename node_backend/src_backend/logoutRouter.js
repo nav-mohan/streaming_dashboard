@@ -12,7 +12,7 @@ const express           = require('express');
 const https             = require('https');
 const { io } = require('./socket');
 
-const logoutOptions = {
+const wpFetchOptions = {
     hostname: wordpressBaseUrl,
     port: 443,
     path: wordpressJwtRevokePath,
@@ -23,7 +23,19 @@ const logoutOptions = {
 };
 const postData = {'AUTH_KEY':wordpressJwtAuthKey};
 
-const logoutRouter       = express.Router();
+const logoutRouter = express.Router();
+
+const forwardToWordpress = function(wpLogoutResponse){
+    var jwtPayloadBuffer = [];
+    wpLogoutResponse.on('data', (d) => {
+        // process.stdout.write(d);
+        jwtPayloadBuffer.push(d.toString())
+    });
+    wpLogoutResponse.on("end",async () => {
+        console.log("Received Wordpress response to logout attempt")
+        console.log(jwtPayloadBuffer)})
+        io.close()
+}
 
 const onNodeEnd = function(nodeLogoutBodyBuffer){
     console.log('Node Logout Request Received');
@@ -42,19 +54,10 @@ const onNodeEnd = function(nodeLogoutBodyBuffer){
         console.log(error);
     }
 
-    var wpLogoutRequest = https.request(logoutOptions, (wpLogoutResponse) => {
-        var jwtPayloadBuffer = [];
-        wpLogoutResponse.on('data', (d) => {
-            process.stdout.write(d);
-            jwtPayloadBuffer.push(d.toString())
-        });
-        wpLogoutResponse.on("end",async () => {
-            console.log("Received Wordpress response to logout attempt")
-            console.log(jwtPayloadBuffer)})
-            io.close()
-    })
+    var wpLogoutRequest = https.request(wpFetchOptions, forwardToWordpress)
+    
     // Send the AUTH_KEY for the plugin
-    wpLogoutRequest.write(JSON.stringify(postData));
+    // wpLogoutRequest.write(JSON.stringify(postData));
 
     // End of transaction
     wpLogoutRequest.end();

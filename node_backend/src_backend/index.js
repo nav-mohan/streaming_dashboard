@@ -4,10 +4,10 @@ const {io} = require('./socket')
 const{app} = require('./routes')
 
 const httpServer = createServer(app);
+io.attach(httpServer);
 
 httpServer.listen(serverPort,()=>{
     console.log('LISTENING ON ',serverPort)
-}); // PORT is free to use
+});
 
-io.attach(httpServer);
 
