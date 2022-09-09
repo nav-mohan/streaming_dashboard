@@ -8,9 +8,6 @@ export const SocketContext = createContext(null);
 export const SocketContextProvider = function(props){
 
     const {authState,setAuthState} = useContext(AuthContext);
-    // const socket = useRef(io(nodeBaseUrl,{
-    //     extraHeaders:{Authorization: authState.jwt}
-    // })).current;
     const socket = io(nodeBaseUrl,{
         extraHeaders:{Authorization: authState.jwt}
     })
@@ -23,10 +20,10 @@ export const SocketContextProvider = function(props){
         alert('Lost connection to middleman server',e);
     }
     const handleInfo = function(e){
-        console.log('INFO',e)
+        alert(e)
     }
     const handleWarning = function(e){
-        console.log('WARNING',e)
+        alert(e)
     }
 
     useEffect(()=>{

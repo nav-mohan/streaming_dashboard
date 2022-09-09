@@ -1,10 +1,9 @@
-const jwtverifier = require('jsonwebtoken')
 const { Server } = require("socket.io");
-
 const { OBSManager } = require('./obsWebsocketManager');
 const { startOBS } = require('./services/startObs');
 const { stopOBS } = require('./services/stopObs');
-const {clientOrigins,serverPort,secretServerKey} = require('./config');
+const {clientOrigins,serverPort} = require('./config');
+const {validateSocketToken} = require('./validateSocketToken')
 
 const io = new Server(serverPort,{
     cors: {
@@ -13,26 +12,10 @@ const io = new Server(serverPort,{
       }
 });
 io.close();
-io.use(function(socket, next){
-    console.log('using use')
-    if (socket.handshake.headers && socket.handshake.headers.authorization){
-        jwtverifier.verify(socket.handshake.headers.authorization, secretServerKey, function(err, decoded) {
-            if (err) {
-                console.log('errored out',err)
-                return next(new Error('Authentication error'))
-            };
-            console.log(decoded)
-            socket.decoded = decoded;
-            next();
-        });
-    }
-    else {
-        console.log('no auth headers found',socket.handshake)
-        next(new Error('Authentication error'));
-    }    
-})
+io.use(validateSocketToken)
 
 io.on("connection", (socket) => {
+    console.log('WEBSOCKET CONNECTED!')
     socket.on('start-obs',()=>{
         console.log('starting OBS');
         startOBS(socket)
@@ -43,13 +26,28 @@ io.on("connection", (socket) => {
         stopOBS(socket);
     })
 
-    socket.on('connect-obs',()=>{
-        const obsManager = new OBSManager(socket);
-        obsManager.initializeConnection('localhost','4455','1234')
+    socket.on('connect-obs',(e)=>{
+        console.log('connecting to obs',e)
+        if(e && e.ip && e.password && e.port){
+            obsManager = new OBSManager(socket);
+            obsManager.initializeConnection(e.ip,e.port,e.password);
+            return ;
+        }
+        else{
+            socket.emit('warning','You need to provide username password and port# for obs connection');
+            return ;
+        }
     })
     
     socket.on('start-stream',()=>{
-        console.log('starting stream');
+        if(socket.obsManager){
+            console.log('starting stream',socket.obsManager);
+            return;
+        }
+        else{
+            socket.emit('warning','Your connection to the Middleman server is not being relayed to OBS for some reason... Probably because OBS is not running.');
+            return;
+        }
     })
 
     socket.on('disconnect',(e)=>{

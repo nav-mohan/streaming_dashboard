@@ -12,6 +12,7 @@ const wordpressJwtLoginPath = process.env.WORDPRESS_JWT_LOGIN_PATH;
 const wordpressJwtValidatePath = process.env.WORDPRESS_JWT_VALIDATE_PATH;
 const wordpressJwtRefreshPath = process.env.WORDPRESS_JWT_REFRESH_PATH;
 const wordpressJwtRevokePath = process.env.WORDPRESS_JWT_REVOKE_PATH;
+const obsUserRole = process.env.OBS_USER_ROLE;
 const deployEnvironment     = process.env.DEPLOY_ENVIRONMENT;
 
 if(!secretServerKey){
@@ -46,6 +47,9 @@ if(!wordpressJwtRefreshPath){
 if(!wordpressJwtRevokePath){
     throw new Error(".env is missing WORDPRESS_JWT_REVOKE_PATH");
 }
+if(!obsUserRole){
+    throw new Error(".env is missing OBS_USER_ROLE");
+}
 
 const clientOrigins = ["http://localhost:3000"];
 
@@ -72,6 +76,7 @@ module.exports = {
     wordpressJwtValidatePath,
     wordpressJwtRefreshPath,
     wordpressJwtRevokePath,
+    obsUserRole,
     deployEnvironment
   };
   

@@ -3,6 +3,9 @@ import { AuthContext } from "./AuthContext";
 import LogDisplay from "./LogDisplay";
 import { SocketContextProvider } from "./SocketContext";
 import StartOBSButton from "./StartOBSButton";
+import StopOBSButton from "./StopOBSButton";
+import StartStreamButton from "./StartStreamButton";
+import ConnectOBSButton from "./ConnectOBS";
 
 export default function Dashboard(){
     const {authState} = useContext(AuthContext);
@@ -12,8 +15,11 @@ export default function Dashboard(){
     else{
         return(
             <SocketContextProvider>
-                <div>Go ahead man!</div>
+                <div>You are connected!</div>
                 <StartOBSButton/>
+                <StopOBSButton/>
+                <ConnectOBSButton/>
+                <StartStreamButton/>
                 <LogDisplay/>
             </SocketContextProvider>
         )

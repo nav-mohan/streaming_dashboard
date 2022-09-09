@@ -1,18 +1,19 @@
 /**
  * You can login with Formdata = (username,password) or Formdata = (email,password)
- */
+*/
 
-var jwt                 = require('jsonwebtoken');
+var jsonwebtoken                 = require('jsonwebtoken');
 const {wordpressBaseUrl,
     wordpressJwtLoginPath,
     wordpressJwtAuthKey,
     deployEnvironment,
-    secretServerKey}  = require('./config');
+    secretServerKey,
+    obsUserRole}  = require('./config');
 const express           = require('express');
 const https             = require('https');
 
-// prepare the fetch options 
-const wpFetchOptions = {
+ // prepare the fetch options 
+const wpOptions = {
     hostname: wordpressBaseUrl,
     port: 443,
     path: wordpressJwtLoginPath,
@@ -21,164 +22,121 @@ const wpFetchOptions = {
     //Must update fm949's SSL certificate to WebNames
     rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
 };
+
 // prepare the postData with the Wordpress JWT Auth Key (Not the secretServerKey)
 const postData = {'AUTH_KEY':wordpressJwtAuthKey};
-
+ 
 const loginRouter       = express.Router();
 
-loginRouter.post('/', (nodeLoginRequest,nodeLoginResponse)=>{
-    console.log("RECEIVED LOGIN REQUEST");
-    
-    // receive the Login Form from React
-    var nodeLoginBodyBuffer = [];
-    nodeLoginRequest.on("data", (d) => {
-        console.log("HELLO");
-        nodeLoginBodyBuffer.push(d)
-    })
-
-    nodeLoginRequest.on("end", () => {
-        console.log("Login Form Received from React");
-
-        // Do Some Sanitization of the Login Form here -- but for what?
-        
-        // prepare the Login Form for Wordpress
-        try {
-            var nodeLoginBody = decodeURIComponent(nodeLoginBodyBuffer).split("&");
-            console.log(nodeLoginBodyBuffer.toString());
-            nodeLoginBody.forEach(loginDetail => {
-                postData[loginDetail.split("=")[0]] = loginDetail.split("=")[1];
-            });
-        } 
-        catch (error) {
-            console.log('Unable to decode Login Form');
-            console.log(error);
-        }
-
-        // forward the Login Form to Wordpress
-        var wpLoginRequest = https.request(wpFetchOptions, (wpLoginResponse) => {
-            
-            var jwtPayloadBuffer = [];
-            wpLoginResponse.on('data', (d) => {
-                // process.stdout.write(d);
-                jwtPayloadBuffer.push(d.toString())
-            });
-            
-            wpLoginResponse.on("end",async () => {
-
-                console.log("Received Wordpress response to auth attempts")
-                console.log(jwtPayloadBuffer)
-                
-                // try parsing the payload
-                try{
-                    jwtPayload = await JSON.parse(jwtPayloadBuffer);
-                }
-                catch(error){
-                    console.log("Unable to parse jwtPayloadBuffer")
-                    console.log(error)
-                    nodeLoginResponse.send({
-                        'success':false,
-                        "wpStatusCode":wpLoginResponse.statusCode,
-                        "wpStatusMessage":wpLoginResponse.statusMessage,
-                        "error":error
-                    })
-                    return;
-                }
-                
-                // if the auth attempt failed
-                if(wpLoginResponse.statusCode !== 200){
-                    console.log("Wordpress Login Failed with ",wpLoginResponse.statusMessage)
-                    nodeLoginResponse.send({
-                        'success':false,
-                        "wpStatusCode":wpLoginResponse.statusCode,
-                        "wpStatusMessage":wpLoginResponse.statusMessage,
-                        "wpPayloadMessage":jwtPayload.data.message
-                    })
-                    return;
-                }
-
-                
-                // if the auth attempt succeeded
-                if(
-                    jwtPayload.success==true && 
-                    jwtPayload.data && 
-                    jwtPayload.data.jwt && 
-                    jwtPayload.user_info &&
-                    jwtPayload.user_info.roles
-                    ){
-                        console.log(jwtPayload.user_info.roles)
-                        if(jwtPayload.user_info.roles.includes('administrator')){
-                            console.log("Welcome Admin!")
-                            // Decode the JWT to get the JWT expiry time
-                            jwt.verify(jwtPayload.data.jwt,secretServerKey,(error,decoded) => {
-                                if(error){
-                                    console.log(error)
-                                    nodeLoginResponse.send({
-                                        'success':false,
-                                        'wpStatusCode':wpLoginResponse.statusCode,
-                                        'wpStatusMessage':wpLoginResponse.statusMessage,
-                                        'errorDetails':`Malformed JWT received ${error}`
-                                    })
-                                    return;
-                                }
-                                nodeLoginResponse.send({
-                                    "success":true,
-                                    "jwt":jwtPayload.data.jwt,
-                                    "jwtExp":decoded.exp,
-                                    "userLogin":jwtPayload.user_info.data.user_login,
-                                    "userPass":jwtPayload.user_info.data.user_pass,
-                                    "userNiceName":jwtPayload.user_info.data.user_nicename,
-                                    "userDisplayName":jwtPayload.user_info.data.display_name,
-                                    "userRoles":jwtPayload.user_info.roles,
-                                });
-                            })
-                            return;
-                        }
-                        else{
-                            console.log("Imposter! not an admin!");
-                            nodeLoginResponse.send({
-                                'success':false,
-                                'wpStatusCode':wpLoginResponse.statusCode,
-                                'wpStatusMessage':wpLoginResponse.statusMessage,
-                                'wpPayloadMessage':"Imposter! You are not an admin!"
-                            })
-                            return;
-                        }
-                    return;
-                }
-                else{
-                    console.log("jwtPayload missing some properties")
-                    console.log(jwtPayload)
-                    nodeLoginResponse.send({
-                        'success':false,
-                        'wpStatusCode':wpLoginResponse.statusCode,
-                        'wpStatusMessage':wpLoginResponse.statusMessage,
-                        'errorDetails':`jwtPayload missing some properties`
-                    });
-                    return;
-                }
-            })
+const decodeForm = function(dataBuffer){
+    // Do some sanitization here
+    try{
+        const data = decodeURIComponent(dataBuffer).split('&');
+        data.forEach(el => {
+            postData[el.split("=")[0]] = el.split("=")[1]
         });
+    }
+    catch(error){
+        console.log(error);
+    }
+}
 
-        // if Node fails to connect to Wordpress
-        wpLoginRequest.on('error', (error) => {
-            console.error("wpLoginError");
-            console.log(error)
-            console.log(wpLoginRequest)
-            nodeLoginResponse.send({
+const wpResOnEnd = function(dataBuffer,wpRes,nodeRes){
+    // console.log('wpResOnEnd',dataBuffer)
+    let jwtPayload;
+    try {
+        jwtPayload = JSON.parse(dataBuffer)
+    } catch (error) {
+        console.log('Unable to parse jwtPayloadBuffer',error);
+        nodeRes.send({
+            'success':false,
+            "wpStatusCode":wpRes.statusCode,
+            "wpStatusMessage":wpRes.statusMessage,
+            "error":error
+        })
+        return;
+    }
+    if(wpRes.statusCode!==200){
+        console.log('WP Login Failed with',wpRes.statusMessage);
+        nodeRes.send({
+            'success':false,
+            "wpStatusCode":wpRes.statusCode,
+            "wpStatusMessage":wpRes.statusMessage,
+            "error":jwtPayload.data.message
+        })
+        return;
+    }
+    if(
+        jwtPayload.success==true && 
+        jwtPayload.data && 
+        jwtPayload.data.jwt && 
+        jwtPayload.user_info &&
+        jwtPayload.user_info.roles   
+    ){
+        console.log('Authenticated - Now checking for Admin Role')
+        if(!jwtPayload.user_info.roles.includes(obsUserRole)){
+            console.log("Imposter! not an admin!");
+            nodeRes.send({
+                'success':false,
+                'wpStatusCode':wpRes.statusCode,
+                'wpStatusMessage':wpRes.statusMessage,
+                'error':"Imposter! You are not an admin!"
+            })
+            return;
+        }
+        jsonwebtoken.verify(jwtPayload.data.jwt,secretServerKey,(error,decoded) => {
+            if(error){
+                console.log(error)
+                nodeRes.send({
+                    'success':false,
+                    'wpStatusCode':wpRes.statusCode,
+                    'wpStatusMessage':wpRes.statusMessage,
+                    'error':`Malformed JWT received ${error}`
+                })
+                return;
+            }
+            nodeRes.send({
+                "success":true,
+                "jwt":jwtPayload.data.jwt,
+                "jwtExp":decoded.exp,
+                "userLogin":jwtPayload.user_info.data.user_login,
+                // "userPass":jwtPayload.user_info.data.user_pass,
+                "userNiceName":jwtPayload.user_info.data.user_nicename,
+                "userDisplayName":jwtPayload.user_info.data.display_name,
+                "userRoles":jwtPayload.user_info.roles,
+            });
+        })
+        return;
+    }
+}
+
+loginRouter.post('/',(nodeReq,nodeRes)=>{
+    var loginPostBuffer = '';
+    nodeReq.on('data',(d)=>{loginPostBuffer+=(d.toString());});
+    nodeReq.on('end',()=>{
+        decodeForm(loginPostBuffer);
+        var wpReq = https.request(wpOptions,(wpRes)=>{
+            var jwtPayloadBuffer = '';
+            wpRes.on('data',(d)=>{jwtPayloadBuffer+=(d.toString())})
+            wpRes.on('end',()=>{wpResOnEnd(jwtPayloadBuffer,wpRes,nodeRes)})
+        })
+        wpReq.write(JSON.stringify(postData));
+        
+        wpReq.on('error',(error)=>{
+            nodeRes.send({
                 "success":false,
                 "wpStatusCode":500,
                 "wpStatusMessage":"Wordpress site is probably down",
-                "wpErrorMessage":error
+                "error":error
             })
-        });
-
-        // Send the AUTH_KEY for the plugin
-        wpLoginRequest.write(JSON.stringify(postData));
-
-        // End of transaction
-        wpLoginRequest.end();
+        })
+        wpReq.end();
+    });
+    nodeReq.on('error',(error)=>{
+        console.log('nodeReq Error:', error);
     })
 })
+
     
 module.exports = {
     loginRouter

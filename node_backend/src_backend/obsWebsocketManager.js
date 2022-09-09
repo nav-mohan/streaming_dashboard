@@ -6,44 +6,53 @@ class OBSManager {
         this.connectionStatus = 0;
         this.authenticationStatus = 0;
         this.obsSocket.on('AuthenticationSuccess',()=>{
-            console.log('OBS authy!');
-            clientSocket.emit('obs-conn-auth','OBS connected and authenticated!');
+            console.log('OBS onAuthenticationSuccess!');
+            clientSocket.emit('info','Middleman server has succesfully connected to OBS and passed authentication!');
+            clientSocket.obsManager = this;
             this.authenticationStatus = 1;
-        })
+        });
         this.obsSocket.on('AuthenticationFailure',()=>{
-            console.log('OBS authy failed');
-            clientSocket.emit('obs-conn-auth','Connected to OBS but failed authentication!');
+            console.log('OBS onAuthenticationFailure');
+            clientSocket.emit('warning','Middleman server connected to OBS but failed authentication!');
             this.authenticationStatus = 0;
-        })
+        });
         this.obsSocket.on('ConnectionOpened', function () {
-            console.log("CONNECTED");
-            clientSocket.emit('obs-conn-auth','Succesfully connected to OBS!');
+            console.log("OBS onConnectionOpened");
+            clientSocket.emit('info','Middleman server has opened a connection to OBS...');
             this.connectionStatus = 1;
         });
         this.obsSocket.on('ConnectionClosed',function(){
-            console.log("DISCONNECTED");
-            clientSocket.emit('obs-conn-auth','OBS disconnected!');
+            console.log("OBS onConnectionClosed");
+            clientSocket.emit('warning','Middleman server has lost connection to OBS! Probably because OBS is not running');
             this.connectionStatus = 0;
-        })
-        this.obsSocket.on("error",(err)=>{
-            console.log("on error");
-            console.log(err);
-            clientSocket.emit('obs-conn-auth','OBS errored out '+err);
-        })
+        });
+        this.obsSocket.on("error",(error)=>{
+            console.log("OBS onError",error);
+            clientSocket.emit('warning','OBS errored out ' + error);
+        });
     }
 
-    initializeConnection = async (obsIpAddress,obsSocketPort,obsSocketPassword)=>{
+    initializeConnection = (obsIpAddress,obsSocketPort,obsSocketPassword)=>{
         this.obsSocket.connect({
             address:obsIpAddress+":"+obsSocketPort,
             password:obsSocketPassword
         })
         .then(()=>{
-            console.log('SUCCESS');
+            console.log('Success!');
+            return this.obsSocket.send('GetSceneList')
         })
-        .catch((err)=>{
-            console.log('OBS ERROR');
-            console.log(err);
+        .then(data=>{
+            console.log(`${data.scenes.length} Available Scenes!`);
+            console.log(data.scenes.map(e=>e.sources))
         })
+        .catch((error)=>{
+            console.log('OBS ERROR',error);
+            return new Error('Obs Error',error)
+        })
+    }
+
+    startStream = ()=>{
+
     }
 }
 

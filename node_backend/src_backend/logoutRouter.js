@@ -38,16 +38,16 @@ const decodeForm = function(dataBuffer){
     }
 }
 
-
 const wpResOnEnd = function(
     dataBuffer,
     wpStatusCode,
     wpStatusMessage,
     nodeRes
     ){
-        let wpLogoutResult;
+        let revokePayload;
         try {
-            wpLogoutResult = JSON.parse(dataBuffer)
+            revokePayload = JSON.parse(dataBuffer)
+            console.log(revokePayload)
         } catch (error) {
             console.log('Unable to parse dataBuffer',error);
             nodeRes.send({
@@ -63,24 +63,22 @@ const wpResOnEnd = function(
                 'success':false,
                 "wpStatusCode":wpStatusCode,
                 "wpStatusMessage":wpStatusMessage,
-                "error":wpLogoutResult.data.message
+                "error":revokePayload.data.message
             })
             return;
         }
-        if(wpLogoutResult.success==true){
+        if(revokePayload.success==true){
             io.fetchSockets().then(sockets=>{
                 sockets.forEach(s => {
                     if(
                         s.handshake.headers && 
                         s.handshake.headers.authorization && 
-                        s.handshake.headers.authorization == wpLogoutResult.data.jwt
+                        s.handshake.headers.authorization == revokePayload.data.jwt
                     ){
                         s.disconnect();
                     }
                 });
             });
-
-            // io.close();
 
             nodeRes.send({
                 'success':true,
@@ -90,7 +88,7 @@ const wpResOnEnd = function(
             })
             return;
         }
-}
+    }
 
 logoutRouter.post('/',(nodeReq,nodeRes)=>{
 

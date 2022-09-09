@@ -1,11 +1,11 @@
 const {spawn} = require('child_process');
-const {BASH_START_OBS} =  require('../bash-scripts');
+const {BASH_START_OBS, START_OBS_FLAGS} =  require('../bash-scripts');
 
 const startOBS = function(socket){
     const detachedOBS = spawn(
-		BASH_START_OBS,
-		{ 
-			detached: true, 
+		BASH_START_OBS,START_OBS_FLAGS,
+		{
+			detached: true,
 		});
 
 	    detachedOBS.stdout.on("data",function(e){
@@ -25,7 +25,7 @@ const startOBS = function(socket){
 	    })
 	    detachedOBS.on("close",function(close_code){
 			console.log(`detachedOBS close_code ${close_code}`)
-			socket.emit('obs-log',{'OBS closed with close_code':close_code.toString()})
+			socket.emit('obs-log',{'OBS closed with close_code':close_code})
 	    })
     detachedOBS.unref();
 }

@@ -5,7 +5,7 @@ import { authStateLocalStorageKey } from "./config";
 export const AuthContext = createContext();
 
 export const AuthContextProvider = function(props){
-    const [authState,setAuthState] = useLocalStorage(authStateLocalStorageKey,{'username':'lalal','jwt':'aksjhdiasy','exp':100000000000});
+    const [authState,setAuthState] = useLocalStorage(authStateLocalStorageKey,{'username':'','jwt':'','exp':0});
 
     return (
         <AuthContext.Provider value = {{authState,setAuthState}}>

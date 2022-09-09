@@ -1,55 +1,35 @@
-var jwt = require('jsonwebtoken');
-const https             = require('https');
+const jwtverifier = require('jsonwebtoken')
+const {secretServerKey} = require('./config');
 
-const { 
-    secretServerKey,
-    wordpressJwtValidatePath,
-    wordpressBaseUrl,
-    deployEnvironment
-} = require('./config');
-
-
-const validateToken = async function(authToken){
-    console.log('validating',authToken);
-    return true;
-    var validateOptions = {
-        hostname: wordpressBaseUrl,
-        port: 443,
-        path: wordpressJwtValidatePath+authToken,
-        method: 'GET',
-        headers:{"Content-Type":"application/json"},
-        //Must update fm949's SSL certificate to WebNames
-        rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
-    };
-    // Forwarding to wordpress
-    var wpValidateRequest = https.request(validateOptions, async (wpValidateResponse)=>{
-        var resBuffer = [];
-        
-        wpValidateResponse.on('data',(d)=>{
-            console.log("RECEIVED DATA")
-            resBuffer.push(d.toString());
-        })
-
-        wpValidateResponse.on('end',async ()=>{
-            try {
-                var res_json = JSON.parse(await resBuffer);
-                if(res_json.success==true && res_json.data.roles.includes('administrator')){
-                    return true;
+const validateSocketToken = function(socket,next){
+    console.log('Validating Socket');
+    if (socket.handshake.headers && socket.handshake.headers.authorization){
+        jwtverifier.verify(socket.handshake.headers.authorization, secretServerKey, function(err, decoded) {
+            if (err) {
+                socket.disconnect()
+                socket.close()        
+                console.log('errored out',err)
+                return next(new Error('Authentication error'));
+            };
+            if (decoded && decoded.iat && decoded.exp){
+                if(decoded.exp*1000 < new Date().getTime()){
+                    console.log('Token already expired')
+                    socket.disconnect();
+                    socket.close();
+                    return next(new Error('Authentication error'));
                 }
-            } catch (error) {
-                console.log(error)
-                return false
+                console.log(decoded)
+                socket.decoded = decoded;
+                next();
             }
-        })
-    })
+        });
+    }
+    else {
+        socket.disconnect()
+        socket.close()
+        console.log('no auth headers found',socket.handshake)
+        next(new Error('Authentication error'));
+    }  
+}
 
-    wpValidateRequest.on('error', (error) => {
-        console.error("Validate JWT Error");
-        console.log(error)
-        return false;
-    });
-    wpValidateRequest.end();
-
- }
-
-module.exports={validateToken}
+module.exports={validateSocketToken}
