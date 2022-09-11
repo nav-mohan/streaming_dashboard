@@ -3,64 +3,64 @@ dotenv.config();
 
 var nodeBaseUrl;
 
-const secretServerKey       = process.env.SECRET_SERVER_KEY;
-const serverPort            = process.env.NODE_SERVER_PORT;
-const clientOriginUrl       = process.env.CLIENT_ORIGIN_URL;
-const wordpressBaseUrl      = process.env.WORDPRESS_BASE_URL;
-const wordpressJwtAuthKey   = process.env.WORDPRESS_JWT_AUTH_KEY
+const secretServerKey = process.env.SECRET_SERVER_KEY;
+const serverPort = process.env.NODE_SERVER_PORT;
+const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
+const wordpressBaseUrl = process.env.WORDPRESS_BASE_URL;
+const wordpressJwtAuthKey = process.env.WORDPRESS_JWT_AUTH_KEY
 const wordpressJwtLoginPath = process.env.WORDPRESS_JWT_LOGIN_PATH;
 const wordpressJwtValidatePath = process.env.WORDPRESS_JWT_VALIDATE_PATH;
 const wordpressJwtRefreshPath = process.env.WORDPRESS_JWT_REFRESH_PATH;
 const wordpressJwtRevokePath = process.env.WORDPRESS_JWT_REVOKE_PATH;
 const obsUserRole = process.env.OBS_USER_ROLE;
-const deployEnvironment     = process.env.DEPLOY_ENVIRONMENT;
+const deployEnvironment = process.env.DEPLOY_ENVIRONMENT;
 
-if(!secretServerKey){
+if (!secretServerKey) {
     throw new Error(".env is missing SECRET_SERVER_KEY");
 }
 
-if(!serverPort){
+if (!serverPort) {
     throw new Error(".env is missing SERVER_PORT");
 }
 
-if(!clientOriginUrl){
+if (!clientOriginUrl) {
     throw new Error(".env is missing CLIENT_ORIGIN_URL");
 }
 
-if(!wordpressBaseUrl){
+if (!wordpressBaseUrl) {
     throw new Error(".env is missing WORDPRESS_BASE_URL");
 }
 
-if(!wordpressJwtAuthKey){
+if (!wordpressJwtAuthKey) {
     throw new Error(".env is missing WORDPRESS_JWT_AUTH_KEY");
 }
 
-if(!wordpressJwtLoginPath){
+if (!wordpressJwtLoginPath) {
     throw new Error(".env is missing WORDPRESS_JWT_LOGIN_PATH");
 }
-if(!wordpressJwtValidatePath){
+if (!wordpressJwtValidatePath) {
     throw new Error(".env is missing WORDPRESS_JWT_VALIDATE_PATH");
 }
-if(!wordpressJwtRefreshPath){
+if (!wordpressJwtRefreshPath) {
     throw new Error(".env is missing WORDPRESS_JWT_REFRESH_PATH");
 }
-if(!wordpressJwtRevokePath){
+if (!wordpressJwtRevokePath) {
     throw new Error(".env is missing WORDPRESS_JWT_REVOKE_PATH");
 }
-if(!obsUserRole){
+if (!obsUserRole) {
     throw new Error(".env is missing OBS_USER_ROLE");
 }
 
 const clientOrigins = ["http://localhost:3000"];
 
-if(!deployEnvironment){
+if (!deployEnvironment) {
     throw new Error(".env is missing DEPLOY_ENVIRONMENT")
 }
 
-if(deployEnvironment === "DEVELOPMENT"){
+if (deployEnvironment === "DEVELOPMENT") {
     nodeBaseUrl = `http://localhost:${serverPort}`;
 }
-if(deployEnvironment === "PRODUCTION"){
+if (deployEnvironment === "PRODUCTION") {
     nodeBaseUrl = `${wordpressBaseUrl}:${serverPort}`;
 }
 
@@ -78,5 +78,5 @@ module.exports = {
     wordpressJwtRevokePath,
     obsUserRole,
     deployEnvironment
-  };
-  
+};
+

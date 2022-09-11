@@ -1,0 +1,3 @@
+https://github.com/obs-websocket-community-projects/obs-websocket-js
+https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#connection-steps
+https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#general-events

@@ -15,7 +15,7 @@
     "helmet": "^6.0.0",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "obs-websocket-js": "^4.0.0",
+    "obs-websocket-js": "^5.0.1",
     "socket.io": "^4.5.1"
   }
 }
