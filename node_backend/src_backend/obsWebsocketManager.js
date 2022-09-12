@@ -5,30 +5,35 @@ class OBSManager {
         this.obsSocket = new OBSWebSocket();
         this.connectionStatus = 0;
         this.authenticationStatus = 0;
-        this.obsSocket.on('Identified',()=>{
+        this.obsSocket.on('Identified',(e)=>{
             console.log('OBS onAuthenticationSuccess!');
+            console.log(e);
             clientSocket.emit('info','Middleman server has succesfully connected to OBS and passed authentication!');
             clientSocket.obsManager = this;
             this.authenticationStatus = 1;
         });
-        this.obsSocket.on('AuthenticationFailure',()=>{
+        this.obsSocket.on('AuthenticationFailure',(e)=>{
             console.log('OBS onAuthenticationFailure');
+            console.log(e);
             clientSocket.emit('warning','Middleman server connected to OBS but failed authentication!');
             this.authenticationStatus = 0;
         });
-        this.obsSocket.on('ConnectionOpened', function () {
+        this.obsSocket.on('ConnectionOpened', function (e) {
             console.log("OBS onConnectionOpened");
+            console.log(e);
             clientSocket.emit('info','Middleman server has opened a connection to OBS...');
             this.connectionStatus = 1;
         });
-        this.obsSocket.on('ConnectionClosed',function(){
+        this.obsSocket.on('ConnectionClosed',function(e){
             console.log("OBS onConnectionClosed");
+            console.log(e);
             clientSocket.emit('warning','Middleman server has lost connection to OBS! Probably because OBS is not running');
             this.connectionStatus = 0;
         });
-        this.obsSocket.on("error",(error)=>{
-            console.log("OBS onError",error);
-            clientSocket.emit('warning','OBS errored out ' + error);
+        this.obsSocket.on("error",(e)=>{
+            console.log("OBS onError");
+            console.log(e);
+            clientSocket.emit('warning','OBS errored out ' + e);
         });
     }
 
@@ -39,7 +44,8 @@ class OBSManager {
         // })
         
         this.obsSocket.connect(
-            `ws://${obsIpAddress}:${obsSocketPort}`,
+            // `ws://${obsIpAddress}:${obsSocketPort}`,
+            'ws://localhost:4455',
             obsSocketPassword
             )
         // .then(()=>{
