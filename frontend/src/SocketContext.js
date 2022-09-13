@@ -13,9 +13,10 @@ export const SocketContextProvider = function(props){
     })
 
     const handleConnect = function(e){
-        alert('Established connection with middleman server!',e)
+        alert('Established connection with middleman server!',e);
+        socket.emit('get-pid')
     };
-    const handleDisconnect = function(e){
+    const handleDisconnect = function(e,socket){
         setAuthState({'username':'','jwt':'','exp':0});
         alert('Lost connection to middleman server',e);
     }
@@ -27,7 +28,7 @@ export const SocketContextProvider = function(props){
     }
 
     useEffect(()=>{
-        socket.on('connect',handleConnect)
+        socket.on('connect',(e)=>{handleConnect(e,socket)})
         socket.on('disconnect',handleDisconnect)
         socket.on('info',handleInfo)
         socket.on('warning',handleWarning)

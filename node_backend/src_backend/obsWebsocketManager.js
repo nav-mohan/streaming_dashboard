@@ -9,7 +9,7 @@ class OBSManager {
             console.log('OBS onAuthenticationSuccess!');
             console.log(e);
             clientSocket.emit('info','Middleman server has succesfully connected to OBS and passed authentication!');
-            clientSocket.obsManager = this;
+            // clientSocket.obsManager = this;
             this.authenticationStatus = 1;
         });
         this.obsSocket.on('AuthenticationFailure',(e)=>{
@@ -60,6 +60,11 @@ class OBSManager {
             console.log('OBS ERROR',error);
             return new Error('Obs Error',error)
         })
+    }
+
+    closeObsSocket = ()=>{
+        console.log('Disconnecting OBSWEbsocket')
+        this.obsSocket.disconnect()
     }
 
     startStream = ()=>{

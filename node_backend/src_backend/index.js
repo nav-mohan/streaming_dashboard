@@ -1,13 +1,14 @@
-const { createServer } = require("http");
-const {serverPort} = require('./config');
+const http = require("http");
+const {nodeServerPort} = require('./config');
 const {io} = require('./socket')
 const{app} = require('./routes')
 
-const httpServer = createServer(app);
+const httpServer = http.createServer(app);
+
 io.attach(httpServer);
 
-httpServer.listen(serverPort,()=>{
-    console.log('LISTENING ON ',serverPort)
+httpServer.listen(nodeServerPort,()=>{
+    console.log('HTTP LISTENING ON ',nodeServerPort)
 });
 
 

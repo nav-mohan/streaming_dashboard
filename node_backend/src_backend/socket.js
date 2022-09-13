@@ -2,10 +2,11 @@ const { Server } = require("socket.io");
 const { OBSManager } = require('./obsWebsocketManager');
 const { startOBS } = require('./services/startObs');
 const { stopOBS } = require('./services/stopObs');
-const {clientOrigins,serverPort} = require('./config');
-const {validateSocketToken} = require('./validateSocketToken')
+const {clientOrigins,nodeServerPort} = require('./config');
+const {validateSocketToken} = require('./validateSocketToken');
+const { getPID } = require("./services/getPID");
 
-const io = new Server(serverPort,{
+const io = new Server(nodeServerPort,{
     cors: {
         origin: clientOrigins,
         methods: ["GET", "POST"]
@@ -16,6 +17,12 @@ io.use(validateSocketToken)
 
 io.on("connection", (socket) => {
     console.log('WEBSOCKET CONNECTED!')
+
+    socket.on('get-pid',()=>{
+        console.log('GETTING PID');
+        getPID(socket)
+    })
+
     socket.on('start-obs',()=>{
         console.log('starting OBS');
         startOBS(socket)
@@ -29,8 +36,8 @@ io.on("connection", (socket) => {
     socket.on('connect-obs',(e)=>{
         console.log('connecting to obs',e)
         if(e && e.ip && e.password && e.port){
-            obsManager = new OBSManager(socket);
-            obsManager.initializeConnection(e.ip,e.port,e.password);
+            socket.obsManager = new OBSManager(socket);
+            socket.obsManager.initializeConnection(e.ip,e.port,e.password);
             return ;
         }
         else{
@@ -52,6 +59,10 @@ io.on("connection", (socket) => {
 
     socket.on('disconnect',(e)=>{
         console.log('WEBSOCKET DISCONNECTED',e);
+        // socket.obsManager.closeObsSocket();
+        if(socket.obsManager){
+            socket.obsManager.closeObsSocket()
+        }
     })
 
   });

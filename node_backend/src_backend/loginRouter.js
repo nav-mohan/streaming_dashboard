@@ -20,7 +20,8 @@ const wpOptions = {
     method: 'POST',
     headers:{"Content-Type":"application/json"},
     //Must update fm949's SSL certificate to WebNames
-    rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
+    // rejectUnauthorized: (deployEnvironment === 'DEVELOPMENT') ? false : true,
+    rejectUnauthorized: false,
 };
 
 // prepare the postData with the Wordpress JWT Auth Key (Not the secretServerKey)

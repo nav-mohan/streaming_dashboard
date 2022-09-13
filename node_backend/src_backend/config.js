@@ -1,10 +1,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-var nodeBaseUrl;
-
 const secretServerKey = process.env.SECRET_SERVER_KEY;
-const serverPort = process.env.NODE_SERVER_PORT;
+const nodeServerPort = process.env.NODE_SERVER_PORT;
 const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
 const wordpressBaseUrl = process.env.WORDPRESS_BASE_URL;
 const wordpressJwtAuthKey = process.env.WORDPRESS_JWT_AUTH_KEY
@@ -19,8 +17,8 @@ if (!secretServerKey) {
     throw new Error(".env is missing SECRET_SERVER_KEY");
 }
 
-if (!serverPort) {
-    throw new Error(".env is missing SERVER_PORT");
+if (!nodeServerPort) {
+    throw new Error(".env is missing NODE_SERVER_PORT");
 }
 
 if (!clientOriginUrl) {
@@ -57,19 +55,11 @@ if (!deployEnvironment) {
     throw new Error(".env is missing DEPLOY_ENVIRONMENT")
 }
 
-if (deployEnvironment === "DEVELOPMENT") {
-    nodeBaseUrl = `http://localhost:${serverPort}`;
-}
-if (deployEnvironment === "PRODUCTION") {
-    nodeBaseUrl = `${wordpressBaseUrl}:${serverPort}`;
-}
-
 module.exports = {
     secretServerKey,
-    serverPort,
+    nodeServerPort,
     clientOriginUrl,
     clientOrigins,
-    nodeBaseUrl,
     wordpressBaseUrl,
     wordpressJwtAuthKey,
     wordpressJwtLoginPath,
