@@ -1,10 +1,8 @@
 const { Server } = require("socket.io");
 const { ObsManager } = require('./obsManager');
-const { startOBS } = require('./services/startObs');
-const { stopOBS } = require('./services/stopObs');
+
 const {clientOrigins,nodeServerPort} = require('./config');
 const {validateSocketToken} = require('./validateSocketToken');
-const { getPID } = require("./services/getPID");
 
 const obsStatus = {
     'isRunning':false,
@@ -12,7 +10,6 @@ const obsStatus = {
     'isStreaming':false
 }
 
-const obsManager = new ObsManager();
 
 const io = new Server(nodeServerPort,{
     cors: {
@@ -22,20 +19,21 @@ const io = new Server(nodeServerPort,{
 });
 io.close();
 io.use(validateSocketToken)
+const obsManager = new ObsManager(io);
 
 io.on("connection", (socket) => {
     console.log('WEBSOCKET CONNECTED!')
 
-    socket.emit('obs-status',obsStatus)
+    socket.emit('obs-status',obsManager.obsStatus);
 
     socket.on('start-obs',()=>{
         console.log('starting OBS');
-        startOBS(socket)
+        obsManager.startOBS()
     })
 
     socket.on('stop-obs',()=>{
         console.log('stoping OBS');
-        stopOBS(socket);
+        obsManager.stopOBS(socket);
     })
 
     socket.on('connect-obs',(e)=>{
