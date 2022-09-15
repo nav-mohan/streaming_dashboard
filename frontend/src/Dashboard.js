@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import LogDisplay from "./LogDisplay";
 import { SocketContextProvider } from "./SocketContext";
-import StartOBSButton from "./StartOBSButton";
-import StopOBSButton from "./StopOBSButton";
 import StartStreamButton from "./StartStreamButton";
-import ConnectOBSButton from "./ConnectOBS";
+import ConnectDisconnectObs from "./ConnectDisconnectObs";
+import { ObsStatusContextProvider } from "./ObsStatusContext";
+import StartStopObsButton from "./StartStopOBSButton";
 
 export default function Dashboard(){
     const {authState} = useContext(AuthContext);
@@ -16,11 +16,12 @@ export default function Dashboard(){
         return(
             <SocketContextProvider>
                 <div>You are connected!</div>
-                <StartOBSButton/>
-                <StopOBSButton/>
-                <ConnectOBSButton/>
-                <StartStreamButton/>
-                <LogDisplay/>
+                <ObsStatusContextProvider>
+                    <StartStopObsButton/>
+                    <ConnectDisconnectObs/>
+                    <StartStreamButton/>
+                    <LogDisplay/>
+                </ObsStatusContextProvider>
             </SocketContextProvider>
         )
     }

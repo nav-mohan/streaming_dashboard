@@ -8,7 +8,7 @@ export default function LogDisplay(){
     const handleObsLog = function(e){
         setObsLog(()=>obsLog+'\n'+e.data)
     }
-    const socket = useContext(SocketContext)
+    const {socket} = useContext(SocketContext)
     socket.on('obs-log',handleObsLog)
 
 

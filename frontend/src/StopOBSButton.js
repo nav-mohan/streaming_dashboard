@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { SocketContext } from "./SocketContext";
 
 export default function StopOBSButton(){
-    const socket = useContext(SocketContext)
+    const {socket} = useContext(SocketContext)
     const handleClick = function(){
         socket.emit('stop-obs')
     }

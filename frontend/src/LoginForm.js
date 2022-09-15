@@ -9,7 +9,6 @@ export default function LoginForm({setAuthState}){
     
         return(
             <div>
-                <div>
                     <input 
                         type='text'
                         placeholder="username/email"
@@ -22,7 +21,6 @@ export default function LoginForm({setAuthState}){
                         value = {inputPassword} 
                         onChange={(e)=>{setInputPassword(e.target.value)}}
                     />
-                </div>
                 <button onClick={(e)=>{
                     handleLogin({
                         inputUsernameEmail,

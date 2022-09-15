@@ -3,7 +3,7 @@ import { AuthContext } from "./AuthContext";
 import LoginForm from "./LoginForm";
 import LogoutButton from "./LogoutButton";
 
-export default function AuthForm(){
+export default function LoginLogout(){
     // authentication context
     const {authState,setAuthState} = useContext(AuthContext);
     
