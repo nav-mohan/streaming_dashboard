@@ -111,6 +111,7 @@ const wpResOnEnd = function(dataBuffer,wpRes,nodeRes){
 }
 
 loginRouter.post('/',(nodeReq,nodeRes)=>{
+    console.log('logging in');
     var loginPostBuffer = '';
     nodeReq.on('data',(d)=>{loginPostBuffer+=(d.toString());});
     nodeReq.on('end',()=>{

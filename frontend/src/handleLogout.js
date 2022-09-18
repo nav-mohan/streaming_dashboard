@@ -18,6 +18,7 @@ export const handleLogout = function({
         }
     })
     .catch((error)=>{
-        console.log('BIG ERROR!',error);
+            setAuthState({'username':'','jwt':'','exp':0});//this unmounts SocketContext.Provider
+            console.log('BIG ERROR!',error);
     })
 }

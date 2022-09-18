@@ -1,26 +1,27 @@
+// const {io}  = require( '../socket');
 const {exec} = require('child_process');
 const {BASH_STOP_OBS} =  require('../bash-scripts');
 
-const stopOBS = function(socket){
-	message = { 'stdout': '', 'stderr': '', 'err': '' }
+const stopOBS = function(){
 	try {
 		exec(BASH_STOP_OBS, (err, stdout, stderr) => {
 			if (err) {
 				console.log('ERR')
 				console.log(err)
-				message['err'] = err
+				io.emit('warning',err)
 			}
 			if (stderr) {
 				console.log('STDERR')
 				console.log(stderr)
-				message['stderr'] = stderr
+				io.emit('info',stderr)
 			}
 			else{
 				console.log('STDOUT')
 				console.log(stdout)
 				message['stdout'] = stdout
+				io.emit('info',stdout)
 			}
-			socket.emit('obs-log',{'data':JSON.stringify(message)})
+			io.emit('obs-log',{'data':JSON.stringify(message)})
 		});
 	} catch (error) {
 		

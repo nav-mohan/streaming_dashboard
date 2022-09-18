@@ -1,10 +1,12 @@
-const {io} = require('./socket')
 const { startOBS } = require('./services/startObs');
 const { stopOBS } = require('./services/stopObs');
 const OBSWebSocket = require('obs-websocket-js').default
+const controller = new AbortController();
+const {signal} = controller;
 
 class ObsManager {
     constructor(io){
+        this.io = io;
         this.obsSocket = new OBSWebSocket();
 
         this.obsStatus = {
@@ -17,52 +19,53 @@ class ObsManager {
         this.obsSocket.on('Identified',(e)=>{
             console.log('OBS onAuthenticationSuccess!');
             console.log(e);
-            io.emit('info','Middleman server has succesfully connected to OBS and passed authentication!');
+            this.io.emit('info','Middleman server has succesfully connected to OBS and passed authentication!');
             this.isRunning = true;// just in case the previous state update did not work
             this.isAuthenticated = true;
         });
         this.obsSocket.on('AuthenticationFailure',(e)=>{
             console.log('OBS onAuthenticationFailure');
             console.log(e);
-            io.emit('warning','Middleman server connected to OBS but failed authentication!');
+            this.io.emit('warning','Middleman server connected to OBS but failed authentication!');
             this.isRunning = true;// just in case the previous state update did not work
             this.isAuthenticated = false;
         });
         this.obsSocket.on('ConnectionOpened', function (e) {
             console.log("OBS onConnectionOpened");
             console.log(e);
-            io.emit('info','Middleman server has opened a connection to OBS...');
+            this.io.emit('info','Middleman server has opened a connection to OBS...');
             this.isRunning = true;// just in case the previous state update did not work
             this.isConnected = true;
         });
         this.obsSocket.on('ConnectionClosed',function(e){
             console.log("OBS onConnectionClosed");
             console.log(e);
-            io.emit('warning','Middleman server has lost connection to OBS! Probably because OBS is not running');
+            this.io.emit('warning','Middleman server has lost connection to OBS! Probably because OBS is not running');
             this.isConnected = false;
         });
         this.obsSocket.on("error",(e)=>{
             console.log("OBS onError");
             console.log(e);
-            io.emit('warning','OBS errored out ' + e);
+            this.io.emit('warning','OBS errored out ' + e);
         });
     }
 
     startObs = ()=>{
         if(this.obsStatus.isRunning == false){
-            startOBS()
-            return;
+            startOBS(this.io,signal);
         }
         else{
+            this.io.emit('info','obs is already running');
         }
     }
 
     stopObs = () => {
         if(this.obsStatus.isRunning == true){
-            stopOBS()
-            return;
+            // stopOBS();
+            controller.abort();
         }
         else{
+            this.io.emit('info','obs is not currently running');
         }
     }
 
@@ -96,9 +99,9 @@ class ObsManager {
         this.obsSocket.disconnect()
     }
 
-    startStream = ()=>{
-
-    }
+    // startStream = ()=>{}
+    // stopStream = ()=>{}
+    // changeScene = (newScene)=>{}
 
 }
 

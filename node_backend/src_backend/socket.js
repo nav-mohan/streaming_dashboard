@@ -10,7 +10,6 @@ const obsStatus = {
     'isStreaming':false
 }
 
-
 const io = new Server(nodeServerPort,{
     cors: {
         origin: clientOrigins,
@@ -19,7 +18,7 @@ const io = new Server(nodeServerPort,{
 });
 io.close();
 io.use(validateSocketToken)
-const obsManager = new ObsManager(io);
+const obsManager = new ObsManager(io);//A single OBSManager for all incoming connections
 
 io.on("connection", (socket) => {
     console.log('WEBSOCKET CONNECTED!')
@@ -28,12 +27,12 @@ io.on("connection", (socket) => {
 
     socket.on('start-obs',()=>{
         console.log('starting OBS');
-        obsManager.startOBS()
+        obsManager.startObs()
     })
 
     socket.on('stop-obs',()=>{
         console.log('stoping OBS');
-        obsManager.stopOBS(socket);
+        obsManager.stopObs(socket);
     })
 
     socket.on('connect-obs',(e)=>{

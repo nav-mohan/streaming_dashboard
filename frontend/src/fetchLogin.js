@@ -1,4 +1,5 @@
 export default function fetchLogin({nodeBaseUrl,loginPath,postBody}){
+    console.log(nodeBaseUrl,loginPath,postBody)
     return fetch(nodeBaseUrl+loginPath, {
         method:"POST",
         headers:{"Content-Type":"application/json"},
