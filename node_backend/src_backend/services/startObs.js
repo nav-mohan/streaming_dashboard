@@ -9,22 +9,26 @@ const startOBS = function(io,signal){
 			detached: true,
 			signal:signal
 		});
-
+		detachedOBS.on('spawn',(e)=>{
+			console.log('spawned',e);
+			io.emit('obs-status',{'isRunning':true})
+		})
 	    detachedOBS.stdout.on("data",function(e){
 		    // console.log("detachedOBS data");
 			// process.stdout.write(e);
 			io.emit('obs-log',{'data':e.toString()})
-	    })
-	    detachedOBS.stdout.on("end",function(e){
-		    console.log("detachedOBS data end");
-			console.log(e);
-			io.emit('obs-log','END')
 	    })
 	    detachedOBS.stderr.on("error",function(err){
 		    console.log("detachedOBS error");
 		    console.log(err);
 			io.emit('obs-log',{'error':err})
 	    })
+		detachedOBS.stdout.on("end",function(e){
+		    console.log("detachedOBS data end");
+			console.log(e);
+			io.emit('obs-log','END')
+	    })
+	
 	    detachedOBS.on("close",function(close_code){
 			console.log(`detachedOBS close_code ${close_code}`)
 			io.emit('obs-log',{'OBS closed with close_code':close_code})

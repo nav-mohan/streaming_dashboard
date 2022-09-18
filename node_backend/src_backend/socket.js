@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
 
     socket.on('stop-obs',()=>{
         console.log('stoping OBS');
-        obsManager.stopObs(socket);
+        obsManager.stopObs();
     })
 
     socket.on('connect-obs',(e)=>{

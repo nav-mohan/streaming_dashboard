@@ -8,11 +8,15 @@ export const SocketContext = createContext(null);
 export const SocketContextProvider = function(props){
     console.log('socketprops',props);
 
-    const [obsStatus,setObsStatus] = useState({
+    const {obsStatus,setObsStatus} = useState({
         'isRunning':false,
         'isConnected':false,
         'isStreaming':false,
     })
+
+    useEffect(()=>{
+        console.log('obs-sttus',obsStatus)
+    },[obsStatus])
 
     const {authState,setAuthState} = useContext(AuthContext);
 
@@ -30,7 +34,8 @@ export const SocketContextProvider = function(props){
     };
     const handleStatus = function(e){
         console.log('receiving obs status',e)
-        setObsStatus((e)=>({...obsStatus,...e}))        
+        console.log({...obsStatus,...e})
+        // setObsStatus((e)=>({...obsStatus,...e}))        
         alert(JSON.stringify(e))
     }
     const handleInfo = function(e){
