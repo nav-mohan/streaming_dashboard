@@ -6,6 +6,7 @@ import StartStreamButton from "./StartStreamButton";
 import ConnectDisconnectObs from "./ConnectDisconnectObs";
 import { ObsStatusContextProvider } from "./ObsStatusContext";
 import StartStopObsButton from "./StartStopOBSButton";
+import ObsStatusBar from "./ObsStatusBar"
 
 export default function Dashboard(){
     const {authState} = useContext(AuthContext);
@@ -17,6 +18,7 @@ export default function Dashboard(){
             <SocketContextProvider>
                 <div>You are connected!</div>
                 <ObsStatusContextProvider>
+                    <ObsStatusBar/>
                     <StartStopObsButton/>
                     <ConnectDisconnectObs/>
                     <StartStreamButton/>

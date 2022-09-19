@@ -5,7 +5,7 @@ import StopOBSButton from "./StopOBSButton";
 
 export default function StartStopObsButton(){
     const {obsStatus} = useContext(ObsStatusContext);
-    if(obsStatus.isRuning)
+    if(obsStatus.isRunning)
         return <StopOBSButton/>
     else
         return (<StartOBSButton/>)

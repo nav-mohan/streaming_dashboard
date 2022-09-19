@@ -1,7 +1,7 @@
 const {spawn} = require('child_process');
 const {BASH_START_OBS, START_OBS_FLAGS} =  require('../bash-scripts');
 
-const startOBS = function(io,signal){
+const spawnObs = function(io,signal){
 
     const detachedOBS = spawn(
 		BASH_START_OBS,START_OBS_FLAGS,
@@ -27,15 +27,17 @@ const startOBS = function(io,signal){
 		    console.log("detachedOBS data end");
 			console.log(e);
 			io.emit('obs-log','END')
+			io.emit('obs-status',{'isRunning':false})
 	    })
 	
 	    detachedOBS.on("close",function(close_code){
 			console.log(`detachedOBS close_code ${close_code}`)
 			io.emit('obs-log',{'OBS closed with close_code':close_code})
+			io.emit('obs-status',{'isRunning':false})
 	    })
     detachedOBS.unref();
 }
 
 
-module.exports={startOBS}
+module.exports={spawnObs}
 // startOBS();

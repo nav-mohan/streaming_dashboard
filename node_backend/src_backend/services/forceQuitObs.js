@@ -2,7 +2,7 @@
 const {exec} = require('child_process');
 const {BASH_STOP_OBS} =  require('../bash-scripts');
 
-const stopOBS = function(){
+const forceQuitObs = function(){
 	try {
 		exec(BASH_STOP_OBS, (err, stdout, stderr) => {
 			if (err) {
@@ -29,5 +29,5 @@ const stopOBS = function(){
 }
 
 
-module.exports={stopOBS}
+module.exports={forceQuitObs}
 // stopOBS();

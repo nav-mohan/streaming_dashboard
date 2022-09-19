@@ -27,24 +27,30 @@ io.on("connection", (socket) => {
 
     socket.on('start-obs',()=>{
         console.log('starting OBS');
-        obsManager.startObs()
+        obsManager.spawnObs()
     })
 
     socket.on('stop-obs',()=>{
         console.log('stoping OBS');
-        obsManager.stopObs();
+        obsManager.abortObs();
     })
 
     socket.on('connect-obs',(e)=>{
-        console.log('connecting to obs',e)
-        if(e && e.ip && e.password && e.port){
-            socket.obsManager = true;
-            obsManager.initializeConnection(e.ip,e.port,e.password);
-            return ;
+        console.log('connecting to obs',e);
+        if(obsStatus.isRunning){
+            if(e && e.ip && e.password && e.port){
+                socket.obsManager = true;
+                obsManager.initializeConnection(e.ip,e.port,e.password);
+                return;
+            }
+            else{
+                socket.emit('warning','You need to provide username password and port# for obs connection');
+                return;
+            }
         }
         else{
-            socket.emit('warning','You need to provide username password and port# for obs connection');
-            return ;
+            socket.emit('info','OBS is not currently running. Please start up OBS');
+            socket.emit('obs-status',obsManager.obsStatus);
         }
     })
 

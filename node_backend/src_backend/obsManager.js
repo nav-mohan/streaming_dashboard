@@ -1,8 +1,16 @@
-const { startOBS } = require('./services/startObs');
-const { stopOBS } = require('./services/stopObs');
+const { spawnObs } = require('./services/spawnObs');
+const { forceQuitObs } = require('./services/forceQuitObs');
 const OBSWebSocket = require('obs-websocket-js').default
 const controller = new AbortController();
-const {signal} = controller;
+const { signal } = controller;
+
+const abortEventListener = (event) => {
+  console.log(signal.aborted); // true
+  console.log(signal.reason); // Hello World
+};
+
+signal.addEventListener("abort", abortEventListener);
+signal.removeEventListener("abort", abortEventListener);
 
 class ObsManager {
     constructor(io){
@@ -50,22 +58,22 @@ class ObsManager {
         });
     }
 
-    startObs = ()=>{
+    spawnObs = ()=>{
         if(this.obsStatus.isRunning == false){
-            startOBS(this.io,signal);
+            spawnObs(this.io,signal);
+            this.obsStatus.isRunning = true;
         }
         else{
-            this.io.emit('info','obs is already running');
+            this.io.emit('info','OBS is already running');
         }
     }
 
-    stopObs = () => {
+    abortObs = () => {
         if(this.obsStatus.isRunning == true){
-            // stopOBS();
-            controller.abort();
+            controller.abort("Hello World");
         }
         else{
-            this.io.emit('info','obs is not currently running');
+            this.io.emit('info','OBS is not currently running');
         }
     }
 
@@ -99,6 +107,7 @@ class ObsManager {
         this.obsSocket.disconnect()
     }
 
+    // forceQuitObs = ()=>{} // uses shell script exec to stop obs (use this when node crashes and is no longer connected to OBS child_process)
     // startStream = ()=>{}
     // stopStream = ()=>{}
     // changeScene = (newScene)=>{}
