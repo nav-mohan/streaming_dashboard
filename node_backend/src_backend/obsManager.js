@@ -1,17 +1,7 @@
 const { spawnObs } = require('./services/spawnObs');
 const { forceQuitObs } = require('./services/forceQuitObs');
 const OBSWebSocket = require('obs-websocket-js').default
-const controller = new AbortController();
-const { signal } = controller;
-
-const abortEventListener = (event) => {
-  console.log(signal.aborted); // true
-  console.log(signal.reason); // Hello World
-};
-
-signal.addEventListener("abort", abortEventListener);
-signal.removeEventListener("abort", abortEventListener);
-
+let controller;
 class ObsManager {
     constructor(io){
         this.io = io;
@@ -60,8 +50,8 @@ class ObsManager {
 
     spawnObs = ()=>{
         if(this.obsStatus.isRunning == false){
-            spawnObs(this.io,signal);
-            this.obsStatus.isRunning = true;
+            controller = new AbortController();
+            spawnObs(this.io,this.obsStatus,controller.signal);
         }
         else{
             this.io.emit('info','OBS is already running');
@@ -70,7 +60,7 @@ class ObsManager {
 
     abortObs = () => {
         if(this.obsStatus.isRunning == true){
-            controller.abort("Hello World");
+            controller.abort('HELLO WORLD')
         }
         else{
             this.io.emit('info','OBS is not currently running');

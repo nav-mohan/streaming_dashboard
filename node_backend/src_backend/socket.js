@@ -17,7 +17,7 @@ const io = new Server(nodeServerPort,{
       }
 });
 io.close();
-io.use(validateSocketToken)
+// io.use(validateSocketToken)
 const obsManager = new ObsManager(io);//A single OBSManager for all incoming connections
 
 io.on("connection", (socket) => {
@@ -75,9 +75,7 @@ io.on("connection", (socket) => {
     socket.on('disconnect',(e)=>{
         console.log('WEBSOCKET DISCONNECTED',e);
         // socket.obsManager.closeObsSocket();
-        if(socket.obsManager){
-            socket.obsManager.closeObsSocket()
-        }
+        socket.obsManager.closeObsSocket()
     })
 
   });
